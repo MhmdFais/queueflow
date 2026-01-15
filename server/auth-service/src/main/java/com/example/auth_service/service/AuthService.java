@@ -1,4 +1,8 @@
 package com.example.auth_service.service;
 
-public class AuthService {
+import com.example.auth_service.dto.RegisterRequest;
+import com.example.auth_service.dto.RegisterResponse;
+
+public interface AuthService {
+    RegisterResponse register(RegisterRequest request);
 }
