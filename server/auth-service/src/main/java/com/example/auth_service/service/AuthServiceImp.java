@@ -1,5 +1,7 @@
 package com.example.auth_service.service;
 
+import com.example.auth_service.dto.LoginRequest;
+import com.example.auth_service.dto.LoginResponse;
 import com.example.auth_service.dto.RegisterRequest;
 import com.example.auth_service.dto.RegisterResponse;
 import com.example.auth_service.entity.User;
@@ -11,11 +13,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImp implements AuthService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService; // ✅ ADD THIS
 
     @Override
-    public RegisterResponse register(RegisterRequest request){
+    public RegisterResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new IllegalStateException("Email already registered");
         }
@@ -34,4 +38,23 @@ public class AuthServiceImp implements AuthService {
                 saved.getEmail()
         );
     }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalStateException("Invalid credentials"));
+
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new IllegalStateException("Invalid credentials");
+        }
+
+        String token = jwtService.generateToken(
+                user.getId().toString(),
+                user.getEmail()
+        );
+
+        return new LoginResponse(token);
+    }
 }
+
