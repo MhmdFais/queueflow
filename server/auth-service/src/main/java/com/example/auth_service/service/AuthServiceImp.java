@@ -16,7 +16,7 @@ public class AuthServiceImp implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService; // ✅ ADD THIS
+    private final JwtService jwtService;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
