@@ -6,6 +6,8 @@ import com.example.auth_service.dto.RegisterRequest;
 import com.example.auth_service.dto.RegisterResponse;
 import com.example.auth_service.entity.User;
 import com.example.auth_service.repository.UserRepository;
+import com.example.event_service.event.AuthEvent;
+import com.example.event_service.event.AuthEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ public class AuthServiceImp implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthEventPublisher eventPublisher;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
@@ -31,6 +34,14 @@ public class AuthServiceImp implements AuthService {
                 .build();
 
         User saved = userRepository.save(user);
+
+        eventPublisher.publish(
+                new AuthEvent(
+                        saved.getId().toString(),
+                        saved.getEmail(),
+                        "REGISTERED"
+                )
+        );
 
         return new RegisterResponse(
                 saved.getId(),
@@ -52,6 +63,14 @@ public class AuthServiceImp implements AuthService {
         String token = jwtService.generateToken(
                 user.getId().toString(),
                 user.getEmail()
+        );
+
+        eventPublisher.publish(
+                new AuthEvent(
+                        user.getId().toString(),
+                        user.getEmail(),
+                        "LOGGED IN"
+                )
         );
 
         return new LoginResponse(token);

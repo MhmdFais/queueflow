@@ -1,4 +1,4 @@
-package com.example.event_service.model;
+package com.example.event_service.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
