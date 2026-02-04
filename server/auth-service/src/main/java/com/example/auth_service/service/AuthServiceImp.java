@@ -7,7 +7,7 @@ import com.example.auth_service.dto.RegisterResponse;
 import com.example.auth_service.entity.User;
 import com.example.auth_service.repository.UserRepository;
 import com.example.event_service.event.AuthEvent;
-import com.example.event_service.event.AuthEventPublisher;
+import com.example.auth_service.messaging.event.publisher.AuthEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
